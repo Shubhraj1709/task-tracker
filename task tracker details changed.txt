@@ -1,0 +1,24 @@
+I found two bugs in your repository query, plus a couple of smaller issues in the controller.
+--------------------------------------------------------------------------------
+Bug 1: Status filter not working (SQL operator precedence)
+In SQL, AND binds tighter than OR, so your query is actually evaluated as:
+{
+(archived = FALSE AND LOWER(title) LIKE :term)
+OR
+(LOWER(description) LIKE :term AND (:status IS NULL OR status = :status))
+}...............(repository class )
+
+Fix: wrap the OR in parentheses so the filters apply to both.
+---------------------------------------------------------------------------------
+Bug 2: Sorting 10 → 1 instead of 1 → 10
+
+ORDER BY created_at DESC sorts newest first. For oldest first (1 → 10), use ASC. 
+Add id as a tie-breaker so the order is stable.
+
+----------------------------------------------------------------------------------
+
+Fixes for the controller
+
+Invalid status crashes with a 500 error. TaskStatus.valueOf(...) throws
+IllegalArgumentException for unknown values (for example "in progress" with a space vs IN_PROGRESS).
+
