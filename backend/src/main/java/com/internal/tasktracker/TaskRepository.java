@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+<<<<<<< HEAD
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
@@ -19,3 +20,15 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
            nativeQuery = true)
     List<Task> searchTasks(@Param("term") String term, @Param("status") String status);
 }
+=======
+@Repository
+public interface TaskRepository extends JpaRepository<Task, Long> {
+
+    // Search tasks by term and optional status filter
+    @Query(value = "SELECT * FROM tasks WHERE archived = FALSE AND LOWER(title) LIKE :term "
+                 + "OR LOWER(description) LIKE :term AND (:status IS NULL OR status = :status) "
+                 + "ORDER BY created_at DESC",
+           nativeQuery = true)
+    List<Task> searchTasks(@Param("term") String term, @Param("status") String status);
+}
+>>>>>>> 1cffbd583a5dc610aa5f71b9c12596807e02dbb5
